@@ -2,19 +2,30 @@ import { useEffect } from "react";
 import { Header } from "../components/Header";
 import { Module } from "../components/Module";
 import { Video } from "../components/Video";
-import { useAppDispatch, useAppSelector } from "../store";
-import { loadCourse, useCurrentLesson } from "../store/slices/player";
+import { useStore } from "../zustand-store";
 
 
 export function Player() {
-    const dispatch = useAppDispatch()
+    const {
+        course,
+        currentLessonIndex,
+        currentModuleIndex,
+        load,
+    } = useStore(store => {
+        return {
+            course: store.course,
+            currentLessonIndex: store.currentLessonIndex,
+            currentModuleIndex: store.currentModuleIndex,
+            load: store.load
+        }
+    })
 
-    const modules = useAppSelector(state => state.player.course?.modules)
+    const modules = course?.modules
 
-    const { currentLesson } = useCurrentLesson()
+    const currentLesson = course?.modules[currentModuleIndex].lessons[currentLessonIndex]
 
     useEffect(() => {
-        dispatch(loadCourse())
+        load()
     }, [])
 
     useEffect(() => {
@@ -45,8 +56,8 @@ export function Player() {
                                 lessonsAmount={module.lessons.length}
                             />
                         )
-                    })
-                    }
+                    })}
+
                 </aside>
 
             </main>
